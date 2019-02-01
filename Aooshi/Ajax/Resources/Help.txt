@@ -1,0 +1,51 @@
+================================================================================================================
+                                               客户端调用指南
+================================================================================================================
+
+================================================================================================================
+方法体:   eAjax()
+================================================================================================================
+示例: var Ax = eAjax();
+属性集:  (以下所赋值均为默认值,调用时请自行更改其值,如与默认值相同可不更改,示例中均以 Ax 实例对象为基础)
+  Ax.Url = "";              须要调用的远程 URL地址
+  Ax.callBack = null;       回调方法,默认为null;
+                              注:此处如查为null默认值则会使用同步调用,如须使用
+                                 异步加载请为其赋值,例如:Ax.callBack = function(obj){alert(obj);}
+                                 其中 函数体中的obj及为返回的对象,其类型根据 isXml属性所决定
+  Ax.isPost = false;        调用的类型,默认为: Get方式,如须 Post 方式请设置为 true
+================================================================================================================
+方法集:
+  Ax.Add("name","value");   向Ax对象,增加一个数据对象, name 为名称,value 为相应的内容,在服务器端可
+                            用 Request["Name"] 方式获取其值,值使用了URL编码,因此你可能还须要用Server.UrlDecode()进行解码;
+  Ax.Get();                 进行数据往返   当设置 callBack 属性及为回调方式时,此方法永远返回为  null 值;
+                                           当未设置 callBack或为null同步调用时,此方法返回数据对象;
+            示例(同步调用):  var ax1 = new eAjax();
+                                 ax1.Url  = "http://www.163.com";
+                                 alert(ax1.Get()); 
+            示例(异步调用):  var ax2 = new eAjax();
+                                 ax2.Url  = "http://www.163.com";
+                                 ax2.callBack = function(obj){alert(obj);}
+                                 ax2.Get();
+================================================================================================================
+客户脚本调用:
+   如查你使用 Asp.Net 进行注册,则你只须要在页面 OnLoad 事件中增加如下方法及可:
+   Aooshi.Ajax.AjaxUtils.RegisterPage();
+      或
+   Aooshi.Ajax.AjaxUtils.RegisterPage(true);
+   前者表示: 注册脚本连接,后者表示将脚本内容直接输出到页面文件流中(注,使用此方法必须使页面的 Head 对象为 runat="server");
+   
+   如果直接调用,请使用以下方法
+   方法一(同级目录)       :<script src="AspNetAjax/eAjaxScript.aspx" type="text/javascript"></script>
+   方法一(绝对虚拟路径)   :<script src="/你的虚拟目录/AspNetAjax/eAjaxScript.aspx" type="text/javascript"></script>
+   方法一(网站全路径)     :<script src="http://你的网站地址/你的虚拟目录/AspNetAjax/eAjaxScript.aspx" type="text/javascript"></script>
+================================================================================================================
+Asp.Net Web.Config 配置文件配置
+  在你相应的虚拟目录Web.Config配置中你必须在 system.web  配置节中加入以下映射才可使用
+      <httpHandlers>
+        <add verb="POST,GET" path="AspNetAjax/*.aspx" type="Aooshi.Ajax.HttpHandler"/>
+      </httpHandlers>
+================================================================================================================
+
+
+调用时必需在当前虚拟目录下建立AjaxAooshi.aspx文件
+内容为： <%@ Page Language="C#"  Inherits="Aooshi.Ajax.CallbackPage" %>

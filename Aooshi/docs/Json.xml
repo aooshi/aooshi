@@ -1,0 +1,43 @@
+﻿<example>
+	<code>
+
+		ArrayList list = new ArrayList();
+		list.Add("item_a");
+		list.Add("item_b");
+		list.Add("item_c");
+		Json.Encode(l);
+
+
+		Hashtable l = new Hashtable();
+		l.Add("a", "中文a");
+		l.Add("b", "中文b");
+		l.Add("c", "中文c");
+		l.Add("d", "中文d");
+		Json.Encode(l);
+
+
+		public class c
+		{
+		public string a = "a";
+		public string b = "a";
+		public string d = "a";
+		public string e = "a";
+		public string x
+		{
+		get
+		{
+		return "s";
+		}
+		}
+		public string xx
+		{
+		set
+		{
+		string v = value;
+		}
+		}
+		}
+		Json.Encode(new c());
+
+	</code>
+</example>

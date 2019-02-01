@@ -1,0 +1,149 @@
+﻿<docs>
+	<example>
+		<code>
+			<![CDATA[
+			
+			
+		Web.Config 配置
+
+		<connectionStrings>
+		
+			<!-- Access 数据库配置 -->
+			<add name="eTopic" providerName="Aooshi.DB.Access,Aooshi" connectionString="Provider=Microsoft.Jet.OLEDB.4.0;data source={ServerMap:~/App_Data/db.mdb}"/>
+			<!-- SQL Server 数据库数据 -->
+				
+			<!--<add name="eTopic" providerName="Aooshi.DB.MSSQL,Aooshi" connectionString="Server=local;uid=huati;pwd=123;Database=huati;"/>-->
+			
+				<!-- MySQL 数据库数据 --><!--
+			<add name="eTopic" providerName="Aooshi.DB.MySQL,Aooshi.DB.MySQL" connectionString="server=127.0.0.1;uid=sa;password=123;database=test;"/>-->
+		
+		</connectionStrings>
+		
+		
+			
+	/// <summary>
+    /// 文件数据库
+    /// </summary>
+    public class DataAccess : Aooshi.DB.DInstance
+    {
+        /// <summary>
+        /// 初始化类,默认使用 配置节中的 eTopic 配置
+        /// </summary>
+        public DataAccess()  : base(Aooshi.Web.WebDBInstance.GetInstance("eTopic",true))
+        {
+            base.DbOpen();
+        }
+
+        /// <summary>
+        /// topic is update bwwrite count
+        /// </summary>
+        /// <param name="tid">tid</param>
+        public void TopicUpdateCount(int tid)
+        {
+            if (DBFactory.Name == Aooshi.DB.Access.FactoryName)
+                DBFactory.Execute("UPDATE et_topic SET bwcount = dcount('*', 'et_bewrite', 'tid=" + tid + "') WHERE (tid = " + tid + ")");
+            else
+                DBFactory.Execute("update et_topic set bwcount=(select count(*) from et_bewrite where tid=" + tid + ") where tid=" + tid);
+        }
+
+
+        /// <summary>
+        /// get topic is news
+        /// </summary>
+        /// <param name="size">get rows</param>
+        public List<et_topic> Topic_GetNews(int size)
+        {
+            et_topic topic = new et_topic();
+            //set size
+            topic.TableCondition.Size = size;
+            //set order
+            topic.TableCondition.Order = "tid desc";
+
+            return DBFactory.GetList<et_topic>(topic);
+        }
+
+        /// <summary>
+        /// get topic is hot
+        /// </summary>
+        /// <param name="size">get rows</param>
+        public List<et_topic> Topic_GetHots(int size)
+        {
+            et_topic topic = new et_topic();
+            //set size
+            topic.TableCondition.Size = size;
+            //set order
+            topic.TableCondition.Order = "bwcount desc";
+
+            return DBFactory.GetList<et_topic>(topic);
+        }
+
+        /// <summary>
+        /// get bewrite is hot
+        /// </summary>
+        /// <param name="tid">tid</param>
+        /// <param name="size">rows</param>
+        /// <param name="start">start</param>
+        public List<et_bewrite> Bewrite_GetNews(int tid,int size, long start)
+        {
+            if (tid > 0)
+                return DBFactory.GetListByMakeSql<et_bewrite>("*", "et_bewrite", "tid=" + tid, "bwid", "bwid desc", start, size);
+
+            return DBFactory.GetListByMakeSql<et_bewrite>("*", "et_bewrite", "", "bwid", "bwid desc", start, size);
+        }
+
+        /// <summary>
+        /// get bewrite is hot
+        /// </summary>
+        /// <param name="userid">userid</param>
+        /// <param name="size">rows</param>
+        /// <param name="start">start</param>
+        public List<et_bewrite> Bewrite_MySay(int userid, int size, long start)
+        {
+            return DBFactory.GetListByMakeSql<et_bewrite>("*", "et_bewrite", "uid=" + userid, "bwid", "bwid desc", start, size);
+        }
+
+        /// <summary>
+        /// get my reply bewrite count
+        /// </summary>
+        /// <param name="userid">userid</param>
+        public int Bewrite_MyReplyCount(int userid)
+        {
+            return DBFactory.GetCount("select count(*) from (select distinct b.bwid,b.tid from et_bewrite b inner join et_reply r on b.bwid=r.bwid  where r.uid=" + userid + ") as b");
+        }
+
+
+        /// <summary>
+        /// bwwrite is update reply count
+        /// </summary>
+        /// <param name="bwid">bwid</param>
+        /// <param name="tid">tid</param>
+        public void BewriteUpdateCount(int tid,int bwid)
+        {
+            if (DBFactory.Name == Aooshi.DB.Access.FactoryName)
+                DBFactory.Execute("UPDATE et_bewrite SET replycount = dcount('*', 'et_reply', 'tid=" + tid + " and bwid="+bwid+"') WHERE (bwid = " + bwid + ")");
+            else
+                DBFactory.Execute("update et_bewrite set replycount=(select count(*) from et_reply where tid=" + tid + " and bwid=" + bwid + ") where bwid=" + bwid);
+        }
+
+
+        /// <summary>
+        /// get reply by order rid
+        /// </summary>
+        /// <param name="bwid">bwid</param>
+        /// <param name="tid">tid</param>
+        public List<et_reply> Reply_GetNews(int tid,int bwid)
+        {
+            et_reply r = new et_reply();
+            //where
+            r.tid = tid;
+            r.bwid = bwid;
+            //order
+            r.TableCondition.Order = "rid asc";
+
+            return DBFactory.GetList<et_reply>(r);
+        }
+    }
+		]]>
+		</code>
+	</example>
+</docs>

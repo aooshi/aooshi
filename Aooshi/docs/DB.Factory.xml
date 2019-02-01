@@ -1,0 +1,227 @@
+﻿<docs>
+	<example>
+		<code>
+			<![CDATA[
+
+    /// <summary>
+    /// 数据库操作
+    /// </summary>
+    public class DataAccess : Aooshi.DB.MSSQL
+    {
+        /// <summary>
+        /// 初始化
+        /// </summary>
+        public DataAccess()
+            : base("server=local;uid=sa;pwd=123;database=temp;")
+        {
+            //打开库
+            base.Open();
+        }
+
+
+        /// <summary>
+        /// 插入一个数据
+        /// </summary>
+        public void Insert()
+        {
+            //数据赋值
+            et_reply reply = new et_reply();
+            reply.bwid = 1;
+            reply.contents = "content";
+            reply.dateline = 1;
+            reply.nickname = "nickname";
+            reply.tid = 1;
+            reply.uid = 1;
+
+            //执行操作
+            this.Insert(reply);
+        }
+
+
+        /// <summary>
+        /// 删除一个回复
+        /// </summary>
+        /// <param name="rid">回复ID</param>
+        public void Delete(int rid)
+        {
+
+            //该对象作为删除实例
+            et_reply ry = new et_reply();
+            ry.rid = rid;
+
+            //删除
+            this.Delete(ry);
+
+        }
+
+        /// <summary>
+        /// 删除一个回复
+        /// </summary>
+        /// <param name="rid">回复ID</param>
+        /// <param name="bwid">主题ID</param>
+        public void Delete(int rid, int bwid)
+        {
+            et_reply ry = new et_reply();
+            ry.rid = rid;
+            ry.bwid = bwid;
+
+            //删除
+            this.Delete(ry);
+
+
+        }
+
+        /// <summary>
+        /// 进行一个更新操作
+        /// </summary>
+        public void Update()
+        {
+            //新数据
+            et_reply reply = new et_reply();
+            reply.bwid = 1;
+            reply.contents = "content";
+
+            //条件
+            et_reply where = new et_reply();
+            where.rid = 1;
+
+            //执行操作
+            this.Update(reply, where);
+        }
+
+        /// <summary>
+        /// 获取指定主题的所有回复
+        /// </summary>
+        /// <param name="tid">主题ID</param>
+        public IList<et_reply> Selecct(int tid)
+        {
+            //条件 
+            et_reply where = new et_reply();
+            where.tid = tid;
+
+            //执行操作
+            return this.GetList<et_reply>(where);
+        }
+    }
+
+    /// <summary>
+    /// 一个通用类
+    /// </summary>
+    public class CommonClass
+    {
+
+        /// <summary>
+        /// 调用更新
+        /// </summary>
+        public static void Update()
+        {
+            //实时开关数据库
+            using (DataAccess da = new DataAccess())
+            {
+                da.Update();
+            }
+        }
+
+        /// <summary>
+        /// 一些操作
+        /// </summary>
+        public static void Work()
+        {
+            DataAccess da = new DataAccess();
+
+            //删除一个数据
+            da.Delete(1);
+            //插入一个数据
+            da.Insert();
+
+            //获取tid=1的数据
+            IList<et_reply> list = da.Selecct(1);
+
+            //关闭数据库
+            da.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// 数据库对象实体
+    /// </summary>
+    public class et_reply : Aooshi.DB.TableBase
+    {
+        /// <summary>
+        /// ID
+        /// </summary>
+        public int rid
+        {
+            get { return base.Get<int>("rid"); }
+            set { base.Set("rid", value); }
+        }
+        /// <summary>
+        /// 主题ID
+        /// </summary>
+        public int tid
+        {
+            get { return base.Get<int>("tid"); }
+            set { base.Set("tid", value); }
+        }
+        /// <summary>
+        /// 描述ID
+        /// </summary>
+        public int bwid
+        {
+            get { return base.Get<int>("bwid"); }
+            set { base.Set("bwid", value); }
+        }
+        /// <summary>
+        /// 内容
+        /// </summary>
+        public string contents
+        {
+            get { return base.Get<string>("contents"); }
+            set { base.Set("contents", value); }
+        }
+        /// <summary>
+        /// 创建者ID
+        /// </summary>
+        public int uid
+        {
+            get { return base.Get<int>("uid"); }
+            set { base.Set("uid", value); }
+        }
+        /// <summary>
+        /// 创建者昵称
+        /// </summary>
+        public string nickname
+        {
+            get { return base.Get<string>("nickname"); }
+            set { base.Set("nickname", value); }
+        }
+        /// <summary>
+        /// 创建时间截
+        /// </summary>
+        public int dateline
+        {
+            get { return base.Get<int>("dateline"); }
+            set { base.Set("dateline", value); }
+        }
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        public et_reply() { }
+
+        /// <summary>
+        /// Initialize Index PK_et_reply
+        /// </summary>
+        /// <param name="rid">ID</param>
+        public et_reply(int rid)
+        {
+            this.rid = rid;
+
+        }
+
+
+    }
+			
+			]]>
+		</code>
+	</example>
+</docs>
