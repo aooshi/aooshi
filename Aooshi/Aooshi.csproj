@@ -225,9 +225,6 @@
     <Compile Include="XThread\Testing.cs" />
     <Compile Include="XThread\XThread.cs" />
     <Compile Include="XThread\XThreadPool.cs" />
-    <Content Include="readme.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AR.resx">
